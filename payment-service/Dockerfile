@@ -1,6 +1,6 @@
 # Stage 1: Builder (Build and dependencies)
 
-FROM node:20-apline AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production
@@ -10,7 +10,7 @@ COPY . .
 
 # Stage 2: Runtime (Production Image)
 
-FROM node:20-apline AS runtime
+FROM node:20-alpine AS runtime
 
 #Set Metadata
 LABEL maintainer="DevOps Team <devops@example.com>"
