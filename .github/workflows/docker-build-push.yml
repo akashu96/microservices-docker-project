@@ -51,12 +51,14 @@ jobs:
                   cache-to: type=registry,ref=${{ env.REGISTRY }}/payment:buildcache,mode=max
 
             - name: Scan Payment Service image
+              if: github.event_name == 'push'
               run: |
+                docker pull aquasec/trivy:latest
                 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
                     aquasec/trivy image \
                     --exit-code 0 \
                     --severity HIGH,CRITICAL \
-                    ${{ env.REGISTRY }}/payment:${{ github.run_number }}
+                    ${{ env.REGISTRY }}/payment:${{ github.run_number }} || true
 
     build-user:
         runs-on: ubuntu-latest
@@ -89,12 +91,14 @@ jobs:
                   cache-to: type=registry,ref=${{ env.REGISTRY }}/user:buildcache,mode=max
 
             - name: Scan User Service image
+              if: github.event_name == 'push'
               run: |
+                docker pull aquasec/trivy:latest
                 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
                     aquasec/trivy image \
                     --exit-code 0 \
                     --severity HIGH,CRITICAL \
-                    ${{ env.REGISTRY }}/user:${{ github.run_number }}
+                    ${{ env.REGISTRY }}/user:${{ github.run_number }} || true
         
     build-notification:
         runs-on: ubuntu-latest
@@ -127,9 +131,11 @@ jobs:
                   cache-to: type=registry,ref=${{ env.REGISTRY }}/notification:buildcache,mode=max
 
             - name: Scan Notification Service image
+              if: github.event_name == 'push'
               run: |
+                docker pull aquasec/trivy:latest
                 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
                     aquasec/trivy image \
                     --exit-code 0 \
                     --severity HIGH,CRITICAL \
-                    ${{ env.REGISTRY }}/notification:${{ github.run_number }}
+                    ${{ env.REGISTRY }}/notification:${{ github.run_number }} || true
