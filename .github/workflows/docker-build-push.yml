@@ -15,9 +15,9 @@ on:
             - main
 
 env:
-    REGISTRY: $ {{ secrets.ACR_URL }}
-    REGISTRY_USERNAME: $ {{ secrets.ACR_USERNAME }}
-    REGISTRY_PASSWORD: $ {{ secrets.ACR_PASSWORD }}
+    REGISTRY: ${{ secrets.ACR_URL }}
+    REGISTRY_USERNAME: ${{ secrets.ACR_USERNAME }}
+    REGISTRY_PASSWORD: ${{ secrets.ACR_PASSWORD }}
 
 jobs:
     build-payment:
