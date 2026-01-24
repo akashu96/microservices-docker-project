@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: User-deployment
+  labels: 
+    app: user
+
+spec:
+  replicas: 3
+  selector: 
+    matchLabels: 
+      app: user
+  
+  template:
+    metadata:
+      labels:
+        app: user
+
+    spec:
+      containers:
+      - name: user
+        image: microservicesacr86306.azurecr.io/user:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3002
+        env:
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3002
+          initialDelaySeconds: 10
+          periodSeconds: 10
+      imagePullSecrets:
+      - name: acr-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 3002
+  selector:
+    app: user

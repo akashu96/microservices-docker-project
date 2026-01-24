@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-deployment
+  labels:
+    app: notification
+
+
+spec:
+  replicas: 3
+  selector: 
+    matchLabels: 
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    
+    spec:
+      containers:
+      - name: notification
+        image: microservicesacr86306.azurecr.io/notification:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3003
+        env:
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3003
+          initialDelaySeconds: 10
+          periodSeconds: 10
+      imagePullSecrets:
+      - name: acr-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 3003
+  selector:
+    app: notification
